@@ -1,6 +1,6 @@
 [package]
 name = "systemd-directories"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Adam Sasine <adam.sasine@gmail.com>"]
 edition = "2021"
 description = "A tiny library to retrieve systemd directories following systemd.exec(5)"
