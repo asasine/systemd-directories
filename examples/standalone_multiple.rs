@@ -1,5 +1,3 @@
-
-
 fn main() {
     println!("runtime dir: {:?}", systemd_directories::runtime_dirs());
     println!("state dir: {:?}", systemd_directories::state_dirs());
