@@ -20,6 +20,7 @@
 //! ```
 
 #![deny(missing_docs)]
+#![forbid(unsafe_code)]
 #![warn(clippy::missing_docs_in_private_items)]
 
 use std::env;
