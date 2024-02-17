@@ -20,6 +20,7 @@
 //! ```
 
 #![deny(missing_docs)]
+#![warn(clippy::missing_docs_in_private_items)]
 
 use std::env;
 use std::path::{Path, PathBuf};
@@ -235,10 +236,19 @@ pub fn config_dir() -> Option<PathBuf> {
 /// [`Self::new`] was called. This differs from the standalone functions, which return [`PathBuf`] objects.
 #[derive(Debug, Clone)]
 pub struct SystemdDirs {
+    /// All runtime directories when the struct was created.
     runtime_dirs: Vec<PathBuf>,
+
+    /// All state directories when the struct was created.
     state_dirs: Vec<PathBuf>,
+
+    /// All cache directories when the struct was created.
     cache_dirs: Vec<PathBuf>,
+
+    /// All logs directories when the struct was created.
     logs_dirs: Vec<PathBuf>,
+
+    /// All configuration directories when the struct was created.
     config_dirs: Vec<PathBuf>,
 }
 

@@ -1,4 +1,4 @@
-use systemd_directories;
+
 
 fn main() {
     println!("runtime dir: {:?}", systemd_directories::runtime_dirs());
