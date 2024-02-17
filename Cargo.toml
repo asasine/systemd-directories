@@ -1,0 +1,11 @@
+[package]
+name = "systemd-directories"
+version = "0.1.0"
+authors = ["Adam Sasine <adam.sasine@gmail.com>"]
+edition = "2021"
+description = "A tiny library to retrieve systemd directories following systemd.exec(5)"
+homepage = "https://github.com/asasine/systemd-directories"
+repository = "https://github.com/asasine/systemd-directories"
+license = "MIT"
+keywords = ["systemd", "directories"]
+categories = ["filesystem", "config"]
