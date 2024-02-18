@@ -26,6 +26,15 @@
 use std::env;
 use std::path::{Path, PathBuf};
 
+/// Returns all directories from the colon-separated environment variable `env_key`.
+fn dirs_from_env(env_key: &str) -> Vec<PathBuf> {
+    // TODO: Return a lazy iterator instead of a vector to reduce allocations (e.g., when only the first path is needed).
+    env::var(env_key)
+        .ok()
+        .map(|dirs| dirs.split(':').map(PathBuf::from).collect())
+        .unwrap_or_default()
+}
+
 /// Returns all runtime directories as defined by `RuntimeDirectory` in the unit file.
 ///
 /// If the environment variable `RUNTIME_DIRECTORY` is not set, it returns an empty vector.
@@ -37,10 +46,7 @@ use std::path::{Path, PathBuf};
 /// let runtime_dirs = systemd_directories::runtime_dirs();
 /// ```
 pub fn runtime_dirs() -> Vec<PathBuf> {
-    env::var("RUNTIME_DIRECTORY")
-        .ok()
-        .map(|dirs| dirs.split(':').map(PathBuf::from).collect())
-        .unwrap_or_default()
+    dirs_from_env("RUNTIME_DIRECTORY")
 }
 
 /// Returns the first runtime directory as defined by `RuntimeDirectory` in the unit file.
@@ -78,10 +84,7 @@ pub fn runtime_dir() -> Option<PathBuf> {
 /// let state_dirs = systemd_directories::state_dirs();
 /// ```
 pub fn state_dirs() -> Vec<PathBuf> {
-    env::var("STATE_DIRECTORY")
-        .ok()
-        .map(|dirs| dirs.split(':').map(PathBuf::from).collect())
-        .unwrap_or_default()
+    dirs_from_env("STATE_DIRECTORY")
 }
 
 /// Returns the first state directory as defined by `StateDirectory` in the unit file.
@@ -119,10 +122,7 @@ pub fn state_dir() -> Option<PathBuf> {
 /// let cache_dirs = systemd_directories::cache_dirs();
 /// ```
 pub fn cache_dirs() -> Vec<PathBuf> {
-    env::var("CACHE_DIRECTORY")
-        .ok()
-        .map(|dirs| dirs.split(':').map(PathBuf::from).collect())
-        .unwrap_or_default()
+    dirs_from_env("CACHE_DIRECTORY")
 }
 
 /// Returns the first cache directory as defined by `CacheDirectory` in the unit file.
@@ -160,10 +160,7 @@ pub fn cache_dir() -> Option<PathBuf> {
 /// let logs_dirs = systemd_directories::logs_dirs();
 /// ```
 pub fn logs_dirs() -> Vec<PathBuf> {
-    env::var("LOGS_DIRECTORY")
-        .ok()
-        .map(|dirs| dirs.split(':').map(PathBuf::from).collect())
-        .unwrap_or_default()
+    dirs_from_env("LOGS_DIRECTORY")
 }
 
 /// Returns the first logs directory as defined by `LogsDirectory` in the unit file.
@@ -201,10 +198,7 @@ pub fn logs_dir() -> Option<PathBuf> {
 /// let config_dirs = systemd_directories::config_dirs();
 /// ```
 pub fn config_dirs() -> Vec<PathBuf> {
-    env::var("CONFIGURATION_DIRECTORY")
-        .ok()
-        .map(|dirs| dirs.split(':').map(PathBuf::from).collect())
-        .unwrap_or_default()
+    dirs_from_env("CONFIGURATION_DIRECTORY")
 }
 
 /// Returns the first configuration directory as defined by `ConfigurationDirectory` in the unit file.
