@@ -26,13 +26,30 @@
 use std::env;
 use std::path::{Path, PathBuf};
 
-/// Returns all directories from the colon-separated environment variable `env_key`.
-fn dirs_from_env(env_key: &str) -> Vec<PathBuf> {
-    // TODO: Return a lazy iterator instead of a vector to reduce allocations (e.g., when only the first path is needed).
-    env::var(env_key)
-        .ok()
-        .map(|dirs| dirs.split(':').map(PathBuf::from).collect())
-        .unwrap_or_default()
+/// A struct to hold colon-separated paths.
+struct ColonSeparatedPaths {
+    /// The colon-separated paths.
+    paths: String,
+}
+
+impl ColonSeparatedPaths {
+    /// Returns a new [`ColonSeparatedPaths`] struct with the given paths.
+    fn new(paths: String) -> Self {
+        Self { paths }
+    }
+
+    /// Returns a new [`ColonSeparatedPaths`] struct with the environment variable `env_key`.
+    fn from_env_key(env_key: &str) -> Self {
+        Self::new(env::var(env_key).unwrap_or_default())
+    }
+
+    /// Returns an iterator over the paths.
+    fn iter(&self) -> impl Iterator<Item = &Path> {
+        self.paths
+            .split(':')
+            .map(Path::new)
+            .filter(|p| !p.as_os_str().is_empty())
+    }
 }
 
 /// Returns all runtime directories as defined by `RuntimeDirectory` in the unit file.
@@ -46,7 +63,10 @@ fn dirs_from_env(env_key: &str) -> Vec<PathBuf> {
 /// let runtime_dirs = systemd_directories::runtime_dirs();
 /// ```
 pub fn runtime_dirs() -> Vec<PathBuf> {
-    dirs_from_env("RUNTIME_DIRECTORY")
+    ColonSeparatedPaths::from_env_key("RUNTIME_DIRECTORY")
+        .iter()
+        .map(PathBuf::from)
+        .collect()
 }
 
 /// Returns the first runtime directory as defined by `RuntimeDirectory` in the unit file.
@@ -70,7 +90,10 @@ pub fn runtime_dirs() -> Vec<PathBuf> {
 /// }
 /// ```
 pub fn runtime_dir() -> Option<PathBuf> {
-    runtime_dirs().first().cloned()
+    ColonSeparatedPaths::from_env_key("RUNTIME_DIRECTORY")
+        .iter()
+        .next()
+        .map(PathBuf::from)
 }
 
 /// Returns all state directories as defined by `StateDirectory` in the unit file.
@@ -84,7 +107,10 @@ pub fn runtime_dir() -> Option<PathBuf> {
 /// let state_dirs = systemd_directories::state_dirs();
 /// ```
 pub fn state_dirs() -> Vec<PathBuf> {
-    dirs_from_env("STATE_DIRECTORY")
+    ColonSeparatedPaths::from_env_key("STATE_DIRECTORY")
+        .iter()
+        .map(PathBuf::from)
+        .collect()
 }
 
 /// Returns the first state directory as defined by `StateDirectory` in the unit file.
@@ -108,7 +134,10 @@ pub fn state_dirs() -> Vec<PathBuf> {
 /// }
 /// ```
 pub fn state_dir() -> Option<PathBuf> {
-    state_dirs().first().cloned()
+    ColonSeparatedPaths::from_env_key("STATE_DIRECTORY")
+        .iter()
+        .next()
+        .map(PathBuf::from)
 }
 
 /// Returns all cache directories as defined by `CacheDirectory` in the unit file.
@@ -122,7 +151,10 @@ pub fn state_dir() -> Option<PathBuf> {
 /// let cache_dirs = systemd_directories::cache_dirs();
 /// ```
 pub fn cache_dirs() -> Vec<PathBuf> {
-    dirs_from_env("CACHE_DIRECTORY")
+    ColonSeparatedPaths::from_env_key("CACHE_DIRECTORY")
+        .iter()
+        .map(PathBuf::from)
+        .collect()
 }
 
 /// Returns the first cache directory as defined by `CacheDirectory` in the unit file.
@@ -146,7 +178,10 @@ pub fn cache_dirs() -> Vec<PathBuf> {
 /// }
 /// ```
 pub fn cache_dir() -> Option<PathBuf> {
-    cache_dirs().first().cloned()
+    ColonSeparatedPaths::from_env_key("CACHE_DIRECTORY")
+        .iter()
+        .next()
+        .map(PathBuf::from)
 }
 
 /// Returns all logs directories as defined by `LogsDirectory` in the unit file.
@@ -160,7 +195,10 @@ pub fn cache_dir() -> Option<PathBuf> {
 /// let logs_dirs = systemd_directories::logs_dirs();
 /// ```
 pub fn logs_dirs() -> Vec<PathBuf> {
-    dirs_from_env("LOGS_DIRECTORY")
+    ColonSeparatedPaths::from_env_key("LOGS_DIRECTORY")
+        .iter()
+        .map(PathBuf::from)
+        .collect()
 }
 
 /// Returns the first logs directory as defined by `LogsDirectory` in the unit file.
@@ -184,7 +222,10 @@ pub fn logs_dirs() -> Vec<PathBuf> {
 /// }
 /// ```
 pub fn logs_dir() -> Option<PathBuf> {
-    logs_dirs().first().cloned()
+    ColonSeparatedPaths::from_env_key("LOGS_DIRECTORY")
+        .iter()
+        .next()
+        .map(PathBuf::from)
 }
 
 /// Returns all configuration directories as defined by `ConfigurationDirectory` in the unit file.
@@ -198,7 +239,10 @@ pub fn logs_dir() -> Option<PathBuf> {
 /// let config_dirs = systemd_directories::config_dirs();
 /// ```
 pub fn config_dirs() -> Vec<PathBuf> {
-    dirs_from_env("CONFIGURATION_DIRECTORY")
+    ColonSeparatedPaths::from_env_key("CONFIGURATION_DIRECTORY")
+        .iter()
+        .map(PathBuf::from)
+        .collect()
 }
 
 /// Returns the first configuration directory as defined by `ConfigurationDirectory` in the unit file.
@@ -222,7 +266,10 @@ pub fn config_dirs() -> Vec<PathBuf> {
 /// }
 /// ```
 pub fn config_dir() -> Option<PathBuf> {
-    config_dirs().first().cloned()
+    ColonSeparatedPaths::from_env_key("CONFIGURATION_DIRECTORY")
+        .iter()
+        .next()
+        .map(PathBuf::from)
 }
 
 /// A struct to snapshot the environment at the time of creation.
