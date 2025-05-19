@@ -52,6 +52,20 @@ impl ColonSeparatedPaths {
     }
 }
 
+impl From<ColonSeparatedPaths> for Vec<PathBuf> {
+    /// Returns all paths as a vector of [`PathBuf`].
+    fn from(paths: ColonSeparatedPaths) -> Self {
+        paths.iter().map(PathBuf::from).collect()
+    }
+}
+
+impl From<ColonSeparatedPaths> for Option<PathBuf> {
+    /// Returns the first path as an [`Option<PathBuf>`].
+    fn from(paths: ColonSeparatedPaths) -> Self {
+        paths.iter().next().map(PathBuf::from)
+    }
+}
+
 /// Returns all runtime directories as defined by `RuntimeDirectory` in the unit file.
 ///
 /// If the environment variable `RUNTIME_DIRECTORY` is not set, it returns an empty vector.
@@ -63,10 +77,7 @@ impl ColonSeparatedPaths {
 /// let runtime_dirs = systemd_directories::runtime_dirs();
 /// ```
 pub fn runtime_dirs() -> Vec<PathBuf> {
-    ColonSeparatedPaths::from_env_key("RUNTIME_DIRECTORY")
-        .iter()
-        .map(PathBuf::from)
-        .collect()
+    ColonSeparatedPaths::from_env_key("RUNTIME_DIRECTORY").into()
 }
 
 /// Returns the first runtime directory as defined by `RuntimeDirectory` in the unit file.
@@ -90,10 +101,7 @@ pub fn runtime_dirs() -> Vec<PathBuf> {
 /// }
 /// ```
 pub fn runtime_dir() -> Option<PathBuf> {
-    ColonSeparatedPaths::from_env_key("RUNTIME_DIRECTORY")
-        .iter()
-        .next()
-        .map(PathBuf::from)
+    ColonSeparatedPaths::from_env_key("RUNTIME_DIRECTORY").into()
 }
 
 /// Returns all state directories as defined by `StateDirectory` in the unit file.
@@ -107,10 +115,7 @@ pub fn runtime_dir() -> Option<PathBuf> {
 /// let state_dirs = systemd_directories::state_dirs();
 /// ```
 pub fn state_dirs() -> Vec<PathBuf> {
-    ColonSeparatedPaths::from_env_key("STATE_DIRECTORY")
-        .iter()
-        .map(PathBuf::from)
-        .collect()
+    ColonSeparatedPaths::from_env_key("STATE_DIRECTORY").into()
 }
 
 /// Returns the first state directory as defined by `StateDirectory` in the unit file.
@@ -134,10 +139,7 @@ pub fn state_dirs() -> Vec<PathBuf> {
 /// }
 /// ```
 pub fn state_dir() -> Option<PathBuf> {
-    ColonSeparatedPaths::from_env_key("STATE_DIRECTORY")
-        .iter()
-        .next()
-        .map(PathBuf::from)
+    ColonSeparatedPaths::from_env_key("STATE_DIRECTORY").into()
 }
 
 /// Returns all cache directories as defined by `CacheDirectory` in the unit file.
@@ -151,10 +153,7 @@ pub fn state_dir() -> Option<PathBuf> {
 /// let cache_dirs = systemd_directories::cache_dirs();
 /// ```
 pub fn cache_dirs() -> Vec<PathBuf> {
-    ColonSeparatedPaths::from_env_key("CACHE_DIRECTORY")
-        .iter()
-        .map(PathBuf::from)
-        .collect()
+    ColonSeparatedPaths::from_env_key("CACHE_DIRECTORY").into()
 }
 
 /// Returns the first cache directory as defined by `CacheDirectory` in the unit file.
@@ -178,10 +177,7 @@ pub fn cache_dirs() -> Vec<PathBuf> {
 /// }
 /// ```
 pub fn cache_dir() -> Option<PathBuf> {
-    ColonSeparatedPaths::from_env_key("CACHE_DIRECTORY")
-        .iter()
-        .next()
-        .map(PathBuf::from)
+    ColonSeparatedPaths::from_env_key("CACHE_DIRECTORY").into()
 }
 
 /// Returns all logs directories as defined by `LogsDirectory` in the unit file.
@@ -195,10 +191,7 @@ pub fn cache_dir() -> Option<PathBuf> {
 /// let logs_dirs = systemd_directories::logs_dirs();
 /// ```
 pub fn logs_dirs() -> Vec<PathBuf> {
-    ColonSeparatedPaths::from_env_key("LOGS_DIRECTORY")
-        .iter()
-        .map(PathBuf::from)
-        .collect()
+    ColonSeparatedPaths::from_env_key("LOGS_DIRECTORY").into()
 }
 
 /// Returns the first logs directory as defined by `LogsDirectory` in the unit file.
@@ -222,10 +215,7 @@ pub fn logs_dirs() -> Vec<PathBuf> {
 /// }
 /// ```
 pub fn logs_dir() -> Option<PathBuf> {
-    ColonSeparatedPaths::from_env_key("LOGS_DIRECTORY")
-        .iter()
-        .next()
-        .map(PathBuf::from)
+    ColonSeparatedPaths::from_env_key("LOGS_DIRECTORY").into()
 }
 
 /// Returns all configuration directories as defined by `ConfigurationDirectory` in the unit file.
@@ -239,10 +229,7 @@ pub fn logs_dir() -> Option<PathBuf> {
 /// let config_dirs = systemd_directories::config_dirs();
 /// ```
 pub fn config_dirs() -> Vec<PathBuf> {
-    ColonSeparatedPaths::from_env_key("CONFIGURATION_DIRECTORY")
-        .iter()
-        .map(PathBuf::from)
-        .collect()
+    ColonSeparatedPaths::from_env_key("CONFIGURATION_DIRECTORY").into()
 }
 
 /// Returns the first configuration directory as defined by `ConfigurationDirectory` in the unit file.
@@ -266,10 +253,7 @@ pub fn config_dirs() -> Vec<PathBuf> {
 /// }
 /// ```
 pub fn config_dir() -> Option<PathBuf> {
-    ColonSeparatedPaths::from_env_key("CONFIGURATION_DIRECTORY")
-        .iter()
-        .next()
-        .map(PathBuf::from)
+    ColonSeparatedPaths::from_env_key("CONFIGURATION_DIRECTORY").into()
 }
 
 /// A struct to snapshot the environment at the time of creation.
@@ -463,7 +447,7 @@ impl SystemdDirs {
     }
 
     /// Helper to map a slice of `PathBuf` to an iterator of `&Path`.
-    fn as_paths<'a>(&'a self, dirs: &'a [PathBuf]) -> impl Iterator<Item = &Path> + 'a {
+    fn as_paths<'a>(&'a self, dirs: &'a [PathBuf]) -> impl Iterator<Item = &'a Path> + 'a {
         dirs.iter().map(|p| p.as_path())
     }
 }
